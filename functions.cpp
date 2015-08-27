@@ -3,7 +3,6 @@
 /* ------ Blur an image ----- */
 void blur_image(string imgName)
 {
-	//printf("Blurring the image '%s'.\n", imgName);
 	cout << "Blurring the image " << imgName << endl;
 
 	Mat src, dst;
@@ -27,7 +26,6 @@ void blur_image(string imgName)
 /* ----- Canny edge detection on camera ----- */
 void canny_video()
 {
-	//printf("Canny Edge Detector from Camera.\n");
 	cout << "Canny Edge Detector from Camera" << endl;
 
 	VideoCapture cap(0);
@@ -50,7 +48,6 @@ void canny_video()
 /* ----- Display an image ----- */
 void display_image(string imgName)
 {
-	//printf("Displaying image '%s'.\n", imgName);
 	cout << "Displaying image " << imgName << endl;
 
 	IplImage* img = cvLoadImage(imgName.c_str());
@@ -110,7 +107,6 @@ void searchForMovement(Mat threshImage, Mat &cameraFeed)
 /* ----- Track an object in a video ----- */
 void object_tracking(string vidName, int sens)
 {
-	//printf("Detecting a moving object in '%s' with %d sensitivity value", vidName, sens);
 	cout << "Detecting a moving object in " << vidName << " with " << sens << " sensitivity value" << endl;
 
 	bool ObjectDetected = false, debugMode = false, trackingEnabled = true, pause = false;
@@ -191,20 +187,19 @@ void object_tracking(string vidName, int sens)
 /* ----- Print all the options available ----- */
 void print_options()
 {
-	printf("Options (command line arguments):\n");
-	printf("\tblur - Blur Image (image)\n");
-	printf("\tcannyVideo - Canny Edge Detector from Camera\n");
-	printf("\tdisplayImage - Display Image (image)\n");
-	printf("\tobjectDetection - Detect Moving Object in Video (video,threshold)\n");
-	printf("\tvideoCapture - Capture Video from Camera\n");
-	printf("\tvideoFromFile - Display Video from File (video)\n");
-	printf("\n");
+	cout << "Options (command line arguments):" << endl;
+	cout << "\tblur - Blur image (image)" << endl;
+	cout << "\tcannyVideo - Canny edge detector from camera" << endl;
+	cout << "\tdisplayImage - Dispaly image (image)" << endl;
+	cout << "\tobjectDetection - Detect moving object in video (video, threshold)" << endl;
+	cout << "\tvideoCapture - Capture video from camera" << endl;
+	cout << "\tvideoFromFile - Display video from file (video)" << endl;
+	cout << endl;
 }
 
 /* ----- Capture video from camera ----- */
 void video_capture()
 {
-	//printf("Capturing video\n");
 	cout << "Capturing video" << endl;
 
 	VideoCapture cap(0);
@@ -241,7 +236,6 @@ void video_capture()
 /* ----- Capture video from a file ----- */
 void video_from_file(string vidName)
 {
-	//printf("Displaying the video from file '%s'.\n");
 	cout << "Displaying the video from file " << vidName << endl;
 
 	cvNamedWindow ("Video", CV_WINDOW_AUTOSIZE);
