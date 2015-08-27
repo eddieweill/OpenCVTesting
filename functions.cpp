@@ -1,9 +1,10 @@
 #include "cvHeader.hpp"
 
 /* ------ Blur an image ----- */
-void blur_image(char *imgName)
+void blur_image(string imgName)
 {
-	printf("Blurring the image '%s'.\n", imgName);
+	//printf("Blurring the image '%s'.\n", imgName);
+	cout << "Blurring the image " << imgName << endl;
 
 	Mat src, dst;
 	char window_name1[] = "Unprocessed Image";
@@ -26,7 +27,8 @@ void blur_image(char *imgName)
 /* ----- Canny edge detection on camera ----- */
 void canny_video()
 {
-	printf("Canny Edge Detector from Camera.\n");
+	//printf("Canny Edge Detector from Camera.\n");
+	cout << "Canny Edge Detector from Camera" << endl;
 
 	VideoCapture cap(0);
 	if (!cap.isOpened())
@@ -46,11 +48,12 @@ void canny_video()
 }
 
 /* ----- Display an image ----- */
-void display_image(char *imgName)
+void display_image(string imgName)
 {
-	printf("Displaying image '%s'.\n", imgName);
+	//printf("Displaying image '%s'.\n", imgName);
+	cout << "Displaying image " << imgName << endl;
 
-	IplImage* img = cvLoadImage(imgName);
+	IplImage* img = cvLoadImage(imgName.c_str());
 	cvNamedWindow("Image", CV_WINDOW_AUTOSIZE);
 	cvShowImage("Image", img);
 	cvWaitKey(0);
@@ -67,15 +70,15 @@ string intToString(int number)
 }
 
 /* ----- Search for movement in a video ----- */
-void searchForMovement(Mat thresholdImage, Mat &cameraFeed)
+void searchForMovement(Mat threshImage, Mat &cameraFeed)
 {
 	bool ObjectDetected = false;
 	Mat temp;
-	int theObject = {0,0};
+	int theObject[2] = {0,0};
 	Rect objectBoundingRectangle = Rect(0,0,0,0);
-	thresholdImage.copyTo(temp);
+	threshImage.copyTo(temp);
 	vector< vector< Point> > contours;
-	vector< Vec4i> heirarchy;
+	vector< Vec4i> hierarchy;
 	findContours(temp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
 	if (contours.size() > 0) ObjectDetected = true;
@@ -105,14 +108,15 @@ void searchForMovement(Mat thresholdImage, Mat &cameraFeed)
 }
 
 /* ----- Track an object in a video ----- */
-void object_tracking(char *vidName, int sens)
+void object_tracking(string vidName, int sens)
 {
-	printf("Detecting a moving object in '%s' with %d sensitivity value", vidName, sens);
+	//printf("Detecting a moving object in '%s' with %d sensitivity value", vidName, sens);
+	cout << "Detecting a moving object in " << vidName << " with " << sens << " sensitivity value" << endl;
 
 	bool ObjectDetected = false, debugMode = false, trackingEnabled = true, pause = false;
 	Mat frame1, frame2;
 	Mat grayImage1, grayImage2;
-	Mat differenceImage, thresholdImage;
+	Mat differenceImage, threshImage;
 	VideoCapture capture;
 	const static int BLUR_SIZE = 10;
 
@@ -122,31 +126,31 @@ void object_tracking(char *vidName, int sens)
 			cout << "Error acquiring video feed\n";
 			getchar(); return;
 		}
-		while (capture.get(CV_CAP_PROP_POS_FRAME) < capture.get(CV_CAP_PROP_FRAME_COUNT)-1) {
+		while (capture.get(CV_CAP_PROP_POS_FRAMES) < capture.get(CV_CAP_PROP_FRAME_COUNT)-1) {
 			capture.read(frame1); capture.read(frame2);
 			cvtColor(frame1, grayImage1, COLOR_BGR2GRAY);
 			cvtColor(frame2, grayImage2, COLOR_BGR2GRAY);
 			absdiff(grayImage1, grayImage2, differenceImage);
-			thresholdImage(differenceImage, thresholdImage, sens, 255, THRESH_BINARY);
+			threshold(differenceImage, threshImage, sens, 255, THRESH_BINARY);
 			
 			if (debugMode == true) {
 				imshow("Difference Image", differenceImage);
-				imshow("Threshold Image", thresholdImage);
+				imshow("Threshold Image", threshImage);
 			} else {
 				destroyWindow("Difference Image");
 				destroyWindow("Threshold Image");
 			}
 
-			blur(thresholdImage, thresholdImage, Size(BLUR_SIZE,BLUR_SIZE));
-			threshold(thresholdImage, thresholdImage, sens, 255, THRESH_BINARY);
+			blur(threshImage, threshImage, Size(BLUR_SIZE,BLUR_SIZE));
+			threshold(threshImage, threshImage, sens, 255, THRESH_BINARY);
 
 			if (debugMode == true)
-				imshow("Final Threshold Image", thresholdImage);
+				imshow("Final Threshold Image", threshImage);
 			else
 				destroyWindow("Final Threshold Image");
 
 			if (trackingEnabled)
-				searchForMovement(thresholdImage, frame1);
+				searchForMovement(threshImage, frame1);
 
 			imshow("Frame1", frame1);
 
@@ -200,32 +204,33 @@ void print_options()
 /* ----- Capture video from camera ----- */
 void video_capture()
 {
-	printf("Capturing video\n");
+	//printf("Capturing video\n");
+	cout << "Capturing video" << endl;
 
 	VideoCapture cap(0);
-	if ( !cap.isOpened() )
+	if (!cap.isOpened())
 	{
 		cout << "Cannot open the video cam" << endl;
 		return;
 	}
 
-	double dWidth = cap.get ( CV_CAP_PROP_FRAME_WIDTH );
-	double dHeight = cap.get ( CV_CAP_PROP_FRAME_HEIGHT );
+	double dWidth = cap.get (CV_CAP_PROP_FRAME_WIDTH);
+	double dHeight = cap.get (CV_CAP_PROP_FRAME_HEIGHT);
 
 	cout << "Frame size: " << dWidth << " x " << dHeight << endl;
-	namedWindow ( "MyVideo", CV_WINDOW_AUTOSIZE );
+	namedWindow ("MyVideo", CV_WINDOW_AUTOSIZE);
 	
-	while ( true )
+	while (true)
 	{
 		Mat frame;
-		bool bSuccess = cap.read ( frame );
-		if ( !bSuccess )
+		bool bSuccess = cap.read (frame);
+		if (!bSuccess)
 		{
 			cout << "Cannot read a frame from video stream" << endl;
 			break;
 		}
-		imshow ( "MyVideo", frame );
-		if ( waitKey(30) == 27 )
+		imshow ("MyVideo", frame);
+		if (waitKey(30) == 27)
 		{
 			cout << "esc key is pressed by user" << endl;
 			break;
@@ -234,21 +239,22 @@ void video_capture()
 }
 
 /* ----- Capture video from a file ----- */
-void video_from_file(char *vidName)
+void video_from_file(string vidName)
 {
-	printf("Displaying the video from file '%s'.\n");
+	//printf("Displaying the video from file '%s'.\n");
+	cout << "Displaying the video from file " << vidName << endl;
 
-	cvNamedWindow ( "Video", CV_WINDOW_AUTOSIZE );
-	CvCapture* capture = cvCreateFileCapture( vidName );
+	cvNamedWindow ("Video", CV_WINDOW_AUTOSIZE);
+	CvCapture* capture = cvCreateFileCapture(vidName.c_str());
 	IplImage* frame;
-	while ( true )
+	while (true)
 	{
-		frame = cvQueryFrame ( capture );
-		if ( !frame ) break;
-		cvShowImage ( "Video", frame );
+		frame = cvQueryFrame (capture);
+		if (!frame) break;
+		cvShowImage ("Video", frame);
 		char c = cvWaitKey(33);
-		if ( c == 27 ) break;
+		if (c == 27) break;
 	}
-	cvReleaseCapture ( &capture );
-	cvDestroyWindow ( "Video" );
+	cvReleaseCapture (&capture);
+	cvDestroyWindow ("Video");
 }

@@ -2,31 +2,41 @@
 
 int main(int argc, char **argv)
 {
-	if (argc < 2)
-	{
-		printf("Usage: ./main <function> <data>\n");
+	if (argc < 2) {
+		printf("Usage: ./main <function> <data> <sensitivity>\n");
 		return -1;
 	}
 
-	string selection;
-	strcpy(selection, argv[1]);
+	string function, data;
+	int sensitivity;
+	if (argc == 2)
+		function = argv[1];
+	else if (argc == 3) {
+		function = argv[1];
+		data = argv[2];
+	}
+	else if (argc == 4) {
+		function = argv[1];
+		data = argv[2];
+		sensitivity = atoi(argv[3]);
+	}
 
-	if (strcmp("--options", selection) == 0)
+	if (function.compare("--options") == 0)
 		print_options();
-	else if (strcmp("blur", selection) == 0)
-		blur_image(selection);
-	else if (strcmp("videoCapture", selection) == 0)
+	else if (function.compare("blur") == 0)
+		blur_image(data);
+	else if (function.compare("videoCapture") == 0)
 		video_capture();
-	else if (strcmp("cannyVideo",selection) == 0)
+	else if (function.compare("cannyVideo") == 0)
 		canny_video();
-	else if (strcmp("displayImage", selection) == 0)
-		display_image(selection);
-	else if (strcmp("videoFromFile", selection) == 0)
-		video_from_file(selection);
-	else if (strcmp("objectDetection", selection) == 0)
-		object_tracking(selection);
+	else if (function.compare("displayImage") == 0)
+		display_image(data);
+	else if (function.compare("videoFromFile") == 0)
+		video_from_file(data);
+	else if (function.compare("objectDetection") == 0)
+		object_tracking(data, sensitivity);
 	else
-		printf("Unknown option.\n");
+		printf("Unknown option\n");
 
 	return 0;
 }
