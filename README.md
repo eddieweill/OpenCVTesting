@@ -9,6 +9,3 @@ Run 'make' to create executable
 
 # Execution command
 ./main <function> <data> <sensitivity>
-1. function - operation to perform
-2. data - image or video to operate on
-3. sensitivity - value to threshold
