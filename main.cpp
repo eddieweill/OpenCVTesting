@@ -35,6 +35,17 @@ int main(int argc, char **argv)
 		video_from_file(data);
 	else if (function.compare("objectDetection") == 0)
 		object_tracking(data, sensitivity);
+	else if (function.compare("lucasKanade") == 0){
+		//Mat imgA = imread("/Users/edwinweill/Clemson/opencvData/images/blue/IMG_1604.JPG", CV_LOAD_IMAGE_GRAYSCALE);
+		//Mat imgB = imread("/Users/edwinweill/Clemson/opencvData/images/blue/IMG_1605.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+		//namedWindow("test1",1);
+		//namedWindow("test2",1);
+		//imshow("test1",imgA);
+		//imshow("test2",imgB);
+		//cvWaitKey(0);
+		lucas_kanade("/Users/edwinweill/Clemson/opencvData/images/blue/IMG_1604.JPG",
+			"/Users/edwinweill/Clemson/opencvData/images/blue/IMG_1605.jpg");
+	}
 	else
 		printf("Unknown option\n");
 

@@ -58,6 +58,68 @@ void display_image(string imgName)
 	cvDestroyWindow("Image");
 }
 
+/* ----- Lucas-Kanade ----- */
+void lucas_kanade(string iname1, string iname2)
+{
+	Mat imgA = imread(iname1, CV_LOAD_IMAGE_GRAYSCALE);
+	Mat imgB = imread(iname2, CV_LOAD_IMAGE_GRAYSCALE);
+
+	Size img_sz = imgA.size();
+	Mat imgC(img_sz,1);
+
+	int win_size = 15;
+	int maxCorners = 20;
+	double qualityLevel = 0.05;
+	double minDistance = 5.0;
+	int blockSize = 3;
+	double d = 0.04;
+	std::vector<cv::Point2f> cornersA;
+	cornersA.reserve(maxCorners);
+	std::vector<cv::Point2f> cornersB;
+	cornersB.reserve(maxCorners);
+
+	goodFeaturesToTrack(imgA, cornersA, maxCorners, qualityLevel, minDistance, cv::Mat());
+	goodFeaturesToTrack(imgB, cornersB, maxCorners, qualityLevel, minDistance, cv::Mat());
+
+	cornerSubPix(imgA, cornersA, Size(win_size, win_size), Size(-1, -1),
+		TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03));
+	cornerSubPix(imgB, cornersB, Size(win_size, win_size), Size(-1, -1),
+		TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03));
+
+	CvSize pyr_sz = Size(img_sz.width+8, img_sz.height/3);
+
+	std::vector<uchar> features_found;
+	features_found.reserve(maxCorners);
+	std::vector<float> feature_errors;
+	feature_errors.reserve(maxCorners);
+
+	calcOpticalFlowPyrLK(imgA, imgB, cornersA, cornersB, features_found, feature_errors,
+		Size(win_size, win_size), 5,
+		cvTermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03), 0);
+
+	for(int i = 0 ; i < features_found.size() ; i++)
+	{
+		cout << "Error is " << feature_errors[i] << endl;
+
+		cout << "Got it" << endl;
+		Point p0(ceil(cornersA[i].x), ceil(cornersA[i].y));
+		Point p1(ceil(cornersB[i].x), ceil(cornersB[i].y));
+		line(imgC, p0, p1, CV_RGB(255,255,255), 2);
+	}
+
+	namedWindow("Image1", 0);
+	namedWindow("Image2", 0);
+	namedWindow("LK", 0);
+
+	imshow("Image1", imgA);
+	imshow("Image2", imgB);
+	imshow("LK", imgC);
+
+	cvWaitKey(0);
+
+	return;
+}
+
 /* ----- Convert an integer to a string ----- */
 string intToString(int number)
 {
